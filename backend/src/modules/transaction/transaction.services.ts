@@ -45,7 +45,14 @@ export const fetchAllTranService = async(userId: Types.ObjectId) => {
 
     return allTransaction;
   } catch(error: any) {
-    console.error("Transaction aborted:\n", error);
     throw new ApiError(error.statusCode || 500, error.message || "Failed in creating user");
   }
 } 
+
+export const updateTransService = async(id: string, userId: Types.ObjectId) => {
+  try {
+    
+  } catch(error: any) {
+    throw new ApiError(error.statusCode || 500, error.message || "Failed in creating user");
+  }
+}

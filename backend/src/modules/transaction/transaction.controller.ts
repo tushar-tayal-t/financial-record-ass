@@ -1,14 +1,12 @@
+import { ApiError } from "../../utils/apiError.js";
 import { TryCatch } from "../../utils/tryCatch.js";
-import { createTranService, fetchAllTranService } from "./transaction.services.js";
+import { createTranService, fetchAllTranService, updateTransService } from "./transaction.services.js";
 
 export const createTransactionController = TryCatch(
   async(req, res) => {
     const userId = req.user?._id;
     if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: "Please login to create transaction"
-      })
+      throw new ApiError(400, "Please login to create transaction");
     }
 
     const newTrans = await createTranService({...req.body, userId});
@@ -25,10 +23,7 @@ export const getAllUserTransController = TryCatch(
   async(req, res) => {
     const userId = req.user?._id;
     if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: "Please login to create transaction"
-      })
+      throw new ApiError(400, "Please login to get transactions");
     }
 
     const allTransaction = await fetchAllTranService(userId);
@@ -45,3 +40,14 @@ export const getAllUserTransController = TryCatch(
   }
 );
 
+export const updateUserTransController = TryCatch(
+  async(req, res) => {
+    const {id} = req.query;
+    const userId = req.user?._id;
+    if (!id || !userId) {
+      throw new ApiError(400, "Bad request");
+    }
+    
+    const updatedTransaction = await updateTransService(id.toString(), userId);
+  }
+)
