@@ -1,6 +1,6 @@
 import { ApiError } from "../../utils/apiError.js";
 import { TryCatch } from "../../utils/tryCatch.js";
-import { createTranService, fetchAllTranService, updateTransService } from "./transaction.services.js";
+import { createTranService, deleteTransService, fetchAllTranService, getTransService, updateTransService } from "./transaction.services.js";
 
 export const createTransactionController = TryCatch(
   async(req, res) => {
@@ -48,6 +48,48 @@ export const updateUserTransController = TryCatch(
       throw new ApiError(400, "Bad request");
     }
     
-    const updatedTransaction = await updateTransService(id.toString(), userId);
+    const updatedTransaction = await updateTransService(id.toString(), userId, req.body);
+
+    res.json({
+      success: true,
+      message: "Successfully updates the transaction",
+      transaction: updatedTransaction
+    })
   }
-)
+);
+
+export const getUserTransController = TryCatch(
+  async(req, res) => {
+    const {id} = req.query;
+    const userId = req.user?._id;
+    if (!id || !userId) {
+      throw new ApiError(400, "Bad request");
+    }
+    
+    const transaction = await getTransService(id.toString(), userId);
+
+    res.json({
+      success: true,
+      message: "Successfully fetched the transaction",
+      transaction
+    })
+  }
+);
+
+export const deleteUserTransController = TryCatch(
+  async(req, res) => {
+    const {id} = req.query;
+    const userId = req.user?._id;
+    if (!id || !userId) {
+      throw new ApiError(400, "Bad request");
+    }
+    
+    const transaction = await deleteTransService(id.toString(), userId);
+
+    res.json({
+      success: true,
+      message: "Successfully delete the transaction",
+      transaction
+    })
+  }
+);

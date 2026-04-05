@@ -1,12 +1,38 @@
 import express from "express";
-import { validateCreateTransaction } from "./transaction.validation.js";
-import { createTransactionController, getAllUserTransController, updateUserTransController } from "./transaction.controller.js";
+import { 
+  validateCreateTransaction, 
+  validateUpdateTransaction 
+} from "./transaction.validation.js";
+import { 
+  createTransactionController, 
+  deleteUserTransController, 
+  getAllUserTransController, 
+  getUserTransController, 
+  updateUserTransController 
+} from "./transaction.controller.js";
 import { isAuth } from "../../middleware/isAuth.js";
+import { authorizeRoles } from "../../middleware/roleAuth.js";
 
 const router = express.Router();
 
-router.post("/", validateCreateTransaction, isAuth, createTransactionController);
+router.post(
+  "/", 
+  validateCreateTransaction, 
+  isAuth, 
+  createTransactionController
+);
+
 router.get("/", isAuth, getAllUserTransController);
-router.put("/:id", isAuth, updateUserTransController);
+router.get("/:id", isAuth, getUserTransController);
+
+router.put(
+  "/:id", 
+  validateUpdateTransaction, 
+  isAuth, 
+  authorizeRoles("ADMIN"), 
+  updateUserTransController
+);
+
+router.delete("/:id", isAuth, authorizeRoles("ADMIN"), deleteUserTransController);
 
 export default router;

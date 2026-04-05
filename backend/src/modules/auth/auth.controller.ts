@@ -1,6 +1,7 @@
 import { TryCatch } from "../../utils/tryCatch.js";
 import bcrypt from "bcrypt";
 import { loginService, registerService } from "./auth.services.js";
+import { ApiError } from "../../utils/apiError.js";
 
 export const registerController = TryCatch(async(req, res) => {
   const {password} = req.body;
@@ -25,4 +26,17 @@ export const loginController = TryCatch(async(req, res) => {
     email: user.email,
     token
   })
-})
+});
+
+export const getUserController = TryCatch(async(req, res) => {
+  const user = req.user;
+  if (!user) {
+    throw new ApiError(400, "Please login");
+  }
+  
+  return res.json({
+    success: true,
+    message: "Successfully fetch user detail",
+    user
+  });
+});
