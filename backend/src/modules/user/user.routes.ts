@@ -22,6 +22,6 @@ router.put(
   updateUserRoleController
 );
 
-router.delete("/:id", isAuth, authorizeRoles("ADMIN"), deleteUserController);
+router.delete("/delete/:id", isAuth, authorizeRoles("ADMIN"), deleteUserController);
 
 export default router;

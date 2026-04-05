@@ -116,7 +116,7 @@ export const getMonthlyTotalService = async(userId: Types.ObjectId) => {
           _id: 0,
           month: "$_id.month",
           year: "$_id.year",
-          type: "$id.type",
+          type: "$_id.type",
           totalAmount: 1
         }
       },
@@ -143,7 +143,7 @@ export const getMonthlyTotalService = async(userId: Types.ObjectId) => {
           _id: 0,
           month: {
             $switch: {
-              $branches: [
+              branches: [
                 { case: { $eq: ["$_id.month", 1] }, then: "January" },
                 { case: { $eq: ["$_id.month", 2] }, then: "February" },
                 { case: { $eq: ["$_id.month", 3] }, then: "March" },

@@ -1,5 +1,4 @@
 import { TryCatch } from "../../utils/tryCatch.js";
-import bcrypt from "bcrypt";
 import { ApiError } from "../../utils/apiError.js";
 import { deleteUserService, getAllUserService, getUserService, updateUserRoleService } from "./user.services.js";
 
@@ -48,7 +47,7 @@ export const deleteUserController = TryCatch(async(req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: "User role updated successfully",
+    message: "User deleted successfully",
     user
   })
 });

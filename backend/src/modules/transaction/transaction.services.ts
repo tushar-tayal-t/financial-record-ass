@@ -59,15 +59,13 @@ export const fetchAllTranService = async(userId: Types.ObjectId) => {
 
 export const updateTransService = async(
   id: string, 
-  userId: Types.ObjectId, 
   {amount, type, category, createdAt, note}: updateTranServiceProps
 ) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
     const transaction = await Transaction.findOne({
-      _id: id,
-      createdBy: userId
+      _id: id
     });
     if (!transaction) {
       throw new ApiError(404, "Transaction not found");
@@ -127,12 +125,10 @@ export const getTransService = async(
 
 export const deleteTransService = async(
   id: string, 
-  userId: Types.ObjectId, 
 ) => {
   try {
     const deleted = await Transaction.findOneAndDelete({
-      _id: id,
-      createdBy: userId
+      _id: id
     });
 
     if (!deleted) {

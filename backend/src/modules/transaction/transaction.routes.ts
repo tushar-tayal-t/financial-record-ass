@@ -16,23 +16,23 @@ import { authorizeRoles } from "../../middleware/roleAuth.js";
 const router = express.Router();
 
 router.post(
-  "/", 
+  "/create", 
   validateCreateTransaction, 
   isAuth, 
   createTransactionController
 );
 
-router.get("/", isAuth, getAllUserTransController);
+router.get("/all", isAuth, getAllUserTransController);
 router.get("/:id", isAuth, getUserTransController);
 
 router.put(
-  "/:id", 
+  "/update/:id", 
   validateUpdateTransaction, 
   isAuth, 
   authorizeRoles("ADMIN"), 
   updateUserTransController
 );
 
-router.delete("/:id", isAuth, authorizeRoles("ADMIN"), deleteUserTransController);
+router.delete("/delete/:id", isAuth, authorizeRoles("ADMIN"), deleteUserTransController);
 
 export default router;

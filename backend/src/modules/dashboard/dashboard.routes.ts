@@ -6,7 +6,6 @@ import {
   getTransSummaryController
 } from "./dashboard.controller.js";
 import { isAuth } from "../../middleware/isAuth.js";
-import { authorizeRoles } from "../../middleware/roleAuth.js";
 
 const router = express.Router();
 

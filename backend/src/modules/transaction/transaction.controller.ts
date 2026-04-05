@@ -42,13 +42,12 @@ export const getAllUserTransController = TryCatch(
 
 export const updateUserTransController = TryCatch(
   async(req, res) => {
-    const {id} = req.query;
-    const userId = req.user?._id;
-    if (!id || !userId) {
+    const {id} = req.params;
+    if (!id) {
       throw new ApiError(400, "Bad request");
     }
     
-    const updatedTransaction = await updateTransService(id.toString(), userId, req.body);
+    const updatedTransaction = await updateTransService(id.toString(), req.body);
 
     res.json({
       success: true,
@@ -60,7 +59,7 @@ export const updateUserTransController = TryCatch(
 
 export const getUserTransController = TryCatch(
   async(req, res) => {
-    const {id} = req.query;
+    const {id} = req.params;
     const userId = req.user?._id;
     if (!id || !userId) {
       throw new ApiError(400, "Bad request");
@@ -78,13 +77,12 @@ export const getUserTransController = TryCatch(
 
 export const deleteUserTransController = TryCatch(
   async(req, res) => {
-    const {id} = req.query;
-    const userId = req.user?._id;
-    if (!id || !userId) {
+    const {id} = req.params;
+    if (!id) {
       throw new ApiError(400, "Bad request");
     }
     
-    const transaction = await deleteTransService(id.toString(), userId);
+    const transaction = await deleteTransService(id.toString());
 
     res.json({
       success: true,

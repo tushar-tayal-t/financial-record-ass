@@ -37,6 +37,13 @@ export const isAuth = async(req: AuthRequest, res: Response, next: NextFunction)
       });
       return;
     }
+
+    if (!user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: "Your account has been deactivated"
+      })
+    }
     
     req.user = user;
     next();

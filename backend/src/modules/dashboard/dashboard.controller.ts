@@ -13,7 +13,7 @@ export const getTransSummaryController = TryCatch(
 
     return res.json({
       success: true,
-      message: "Successfully created transaction",
+      message: "Successfully fetched transaction summary",
       summary
     });
   }
