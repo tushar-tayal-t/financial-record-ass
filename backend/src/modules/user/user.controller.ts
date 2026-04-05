@@ -3,12 +3,14 @@ import { ApiError } from "../../utils/apiError.js";
 import { deleteUserService, getAllUserService, getUserService, updateUserRoleService } from "./user.services.js";
 
 export const getAllUserController = TryCatch(async(req, res) => {
-  const users = await getAllUserService();
+  const data = await getAllUserService(req.query);
   return res.status(200).json({
     success: true,
     message: "Fetched all users successfully",
-    users
-  })
+    users: data.users,
+    limit: data.Limit,
+    page: data.Page
+  });
 });
 
 export const getUserController = TryCatch(async(req, res) => {

@@ -1,12 +1,24 @@
 import { ApiError } from "../../utils/apiError.js";
 import { TryCatch } from "../../utils/tryCatch.js";
-import { createTranService, deleteTransService, fetchAllTranService, getTransService, updateTransService } from "./transaction.services.js";
+import { 
+  canCreateTransRequest, 
+  createTranService, 
+  deleteTransService, 
+  fetchAllTranService, 
+  getTransService, 
+  updateTransService 
+} from "./transaction.services.js";
 
 export const createTransactionController = TryCatch(
   async(req, res) => {
     const userId = req.user?._id;
     if (!userId) {
       throw new ApiError(400, "Please login to create transaction");
+    }
+
+    const canMakeRequest = await canCreateTransRequest(userId.toString());
+    if (!canMakeRequest) {
+      throw new ApiError(429, "Too many request");
     }
 
     const newTrans = await createTranService({...req.body, userId});
@@ -25,13 +37,14 @@ export const getAllUserTransController = TryCatch(
     if (!userId) {
       throw new ApiError(400, "Please login to get transactions");
     }
-
-    const allTransaction = await fetchAllTranService(userId);
+    const data = await fetchAllTranService(userId, req.query);
 
     return res.json({
       success: true,
       message: "Successfully fetched all user transaction",
-      transaction: allTransaction,
+      transaction: data.allTransaction,
+      limit: data.Limit,
+      page: data.Page,
       user: {
         name: req.user?.name,
         email: req.user?.email

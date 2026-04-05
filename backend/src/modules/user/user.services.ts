@@ -3,10 +3,18 @@ import { ApiError } from "../../utils/apiError.js";
 import { User } from "../auth/auth.model.js";
 import { Transaction } from "../transaction/transaction.model.js";
 
-export const getAllUserService = async() => {
+export const getAllUserService = async(
+  {
+    limit = 10, 
+    page = 1
+  }: {limit?: any, page?: any}
+) => {
   try {
-    const users = await User.find();
-    return users;
+    const Limit = Number(limit);
+    const Page = Number(page);
+    const skip = (Page - 1) * Limit;
+    const users = await User.find().sort({createdAt: -1}).skip(skip).limit(Limit);
+    return {users, Limit, Page};
   } catch(error: any) {
     throw new ApiError(error.statusCode || 500, error.message || "Failed in creating user");
   }

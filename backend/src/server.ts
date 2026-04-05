@@ -8,7 +8,7 @@ const PORT = config.PORT;
 
 const startServer = async() => {
   try {
-    // await connectToRedis();
+    await connectToRedis();
     await connectDb();
     logger.info(`✅ Conneted to database successfully`);
 

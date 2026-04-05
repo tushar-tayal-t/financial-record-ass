@@ -2,6 +2,7 @@ import mongoose, { Types } from "mongoose";
 import { ApiError } from "../../utils/apiError.js";
 import { Transaction } from "./transaction.model.js";
 import { User } from "../auth/auth.model.js";
+import { redisClient } from "../../config/redis.js";
 
 type createTranServiceProps = {
   amount: string | number;
@@ -17,6 +18,11 @@ type updateTranServiceProps = {
   category?: string;
   note?: string;
   createdAt?: Date | string;
+}
+
+type fetchAllTransProps = {
+  limit?: any;
+  page?: any;
 }
 
 export const createTranService = async({amount, type, category, note, userId}: createTranServiceProps) => {
@@ -45,13 +51,49 @@ export const createTranService = async({amount, type, category, note, userId}: c
   }
 } 
 
-export const fetchAllTranService = async(userId: Types.ObjectId) => {
+export const canCreateTransRequest = async(
+  id: string  
+) => {
   try {
+    const redisUserRateLimitKey = `rate-limit:${id}`;
+
+    const userRate = Number(await redisClient.get(redisUserRateLimitKey));
+    if (userRate && userRate >= 5) {
+      return false;
+    }
+
+    if (userRate && userRate < 5) {
+      const ttl = await redisClient.ttl(redisUserRateLimitKey); 
+      await redisClient.set(redisUserRateLimitKey, (userRate + 1).toString());
+      if (ttl > 0) {
+        await redisClient.expire(redisUserRateLimitKey, ttl);
+      }
+      return true;
+    }
+
+    await redisClient.setEx(redisUserRateLimitKey, 60, "1");
+    return true;
+  } catch(error: any) {
+    throw new ApiError(
+      error.statusCode || 500, 
+      error.message || "Failed in validating usage limit"
+    );
+  }
+}
+
+export const fetchAllTranService = async(
+  userId: Types.ObjectId, 
+  {limit = 10, page = 1}: fetchAllTransProps
+) => {
+  try {
+    const Limit = Number(limit);
+    const Page = Number(page);
+    const skip = (Page - 1) * Limit;
     const allTransaction = await Transaction.find({
       createdBy: userId
-    });
+    }).sort({createdAt: -1}).skip(skip).limit(Limit);
 
-    return allTransaction;
+    return {allTransaction, Limit, Page};
   } catch(error: any) {
     throw new ApiError(error.statusCode || 500, error.message || "Failed in creating user");
   }
