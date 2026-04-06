@@ -46,6 +46,10 @@ export const loginService = async({email, password}: Omit<registerServiceProps, 
     if (!user) {
       throw new ApiError(404, "Please enter valid credentials");
     }
+
+    if (!user.isActive) {
+      throw new ApiError(401, "Your account has been blocked. Please contact admin");
+    }
     const isEqual = await bcrypt.compare(password, user.password);
 
     if (!isEqual) {

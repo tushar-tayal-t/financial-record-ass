@@ -149,12 +149,10 @@ export const updateTransService = async(
 
 export const getTransService = async(
   id: string, 
-  userId: Types.ObjectId, 
 ) => {
   try {
     const transaction = await Transaction.findOne({
-      _id: id,
-      createdBy: userId
+      _id: id
     });
     if (!transaction) {
       throw new ApiError(404, "Transaction not found");

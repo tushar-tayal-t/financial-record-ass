@@ -73,12 +73,11 @@ export const updateUserTransController = TryCatch(
 export const getUserTransController = TryCatch(
   async(req, res) => {
     const {id} = req.params;
-    const userId = req.user?._id;
-    if (!id || !userId) {
+    if (!id) {
       throw new ApiError(400, "Bad request");
     }
     
-    const transaction = await getTransService(id.toString(), userId);
+    const transaction = await getTransService(id.toString());
 
     res.json({
       success: true,
